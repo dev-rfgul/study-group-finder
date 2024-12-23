@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Login from "./Components/Login";
-// import Signup from "./Signup";
-// import Singup from "./Singup";
 import Singup from "./Components/Singup";
+import Home from "./Components/Home"
+import SubjectPage from "./Components/SubjectPage";
 
 const App = () => {
     return (
@@ -20,6 +20,8 @@ const App = () => {
                 <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Singup />} />
+                    <Route path="/home" element={<Home />} />
+                    <Route path="/:department" element={<SubjectPage />} />
                 </Routes>
             </div>
         </Router>
