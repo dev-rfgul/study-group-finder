@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios'
+import { Link, } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 
 const Users = () => {
     const [users, setUsers] = useState([]);
-    const navigate = useNavigate();
+
 
     useEffect(() => {
         axios.get('http://localhost:3001/getUsers')
             .then(result => setUsers(result.data))
             .catch(error => console.log(error))
-    }, [])  
+    }, [])
 
     const deleteUser = (id) => {
         axios.delete(`http://localhost:3001/deleteUserByID/${id}`)
