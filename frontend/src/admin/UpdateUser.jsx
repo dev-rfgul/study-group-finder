@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 
 const UpdateUser = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+
     const [userDetails, setUserDetails] = useState({
-        name: 'John Doe',
-        email: 'johndoe@example.com',
+        name: '',
+        email: '',
+        department: '',
         password: '',
         confirmPassword: ''
     });
@@ -18,9 +24,35 @@ const UpdateUser = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle update logic here
-        console.log('User updated', userDetails);
+        const { name, email, department, password, confirmPassword } = userDetails;
+
+        if (password !== confirmPassword) {
+            alert('Passwords do not match!');
+            return;
+        }
+
+        axios
+            .put(`http://localhost:3001/updateUserByID/${id}`, { name, email, department })
+            .then((result) => {
+                console.log(result);
+                navigate('/admin/user');
+            })
+            .catch((error) => {
+                console.error('Error updating user:', error);
+            });
     };
+
+    useEffect(() => {
+        axios
+            .get(`http://localhost:3001/getUserByID/${id}`)
+            .then((response) => {
+                const { name, email, department } = response.data;
+                setUserDetails({ name, email, department, password: '', confirmPassword: '' });
+            })
+            .catch((error) => {
+                console.error('Error fetching user:', error);
+            });
+    }, [id]);
 
     return (
         <div className="bg-gradient-to-br from-blue-500 to-purple-600 min-h-screen flex items-center justify-center">
@@ -34,10 +66,7 @@ const UpdateUser = () => {
 
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     <div>
-                        <label
-                            htmlFor="name"
-                            className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1"
-                        >
+                        <label htmlFor="name" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1">
                             Name
                         </label>
                         <input
@@ -46,16 +75,28 @@ const UpdateUser = () => {
                             name="name"
                             value={userDetails.name}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            className="w-full px-4 py-3 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                             placeholder="Enter your name"
                         />
                     </div>
 
                     <div>
-                        <label
-                            htmlFor="email"
-                            className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1"
-                        >
+                        <label htmlFor="department" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1">
+                            Department
+                        </label>
+                        <input
+                            type="text"
+                            id="department"
+                            name="department"
+                            value={userDetails.department}
+                            onChange={handleChange}
+                            className="w-full px-4 py-3 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            placeholder="Enter your department"
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="email" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1">
                             Email Address
                         </label>
                         <input
@@ -64,16 +105,13 @@ const UpdateUser = () => {
                             name="email"
                             value={userDetails.email}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            className="w-full px-4 py-3 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                             placeholder="Enter your email"
                         />
                     </div>
 
                     <div>
-                        <label
-                            htmlFor="password"
-                            className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1"
-                        >
+                        <label htmlFor="password" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1">
                             New Password
                         </label>
                         <input
@@ -82,16 +120,13 @@ const UpdateUser = () => {
                             name="password"
                             value={userDetails.password}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            className="w-full px-4 py-3 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                             placeholder="Enter a new password"
                         />
                     </div>
 
                     <div>
-                        <label
-                            htmlFor="confirmPassword"
-                            className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1"
-                        >
+                        <label htmlFor="confirmPassword" className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1">
                             Confirm Password
                         </label>
                         <input
@@ -100,14 +135,14 @@ const UpdateUser = () => {
                             name="confirmPassword"
                             value={userDetails.confirmPassword}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                            className="w-full px-4 py-3 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                             placeholder="Confirm your new password"
                         />
                     </div>
 
                     <button
                         type="submit"
-                        className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 px-4 rounded-lg shadow-lg hover:opacity-90 transition-opacity duration-300 focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-offset-2"
+                        className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 px-4 rounded-lg shadow-lg hover:opacity-90 transition-opacity duration-300 focus:ring-4 focus:ring-blue-400"
                     >
                         Update Profile
                     </button>
@@ -115,12 +150,9 @@ const UpdateUser = () => {
 
                 <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-6">
                     Want to cancel?{' '}
-                    <a
-                        href="#"
-                        className="text-red-500 dark:text-red-400 font-semibold hover:underline"
-                    >
+                    <Link to="/admin/user" className="text-red-500 dark:text-red-400 font-semibold hover:underline">
                         Go back
-                    </a>
+                    </Link>
                 </p>
             </div>
         </div>

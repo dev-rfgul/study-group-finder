@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 
 const Signup = () => {
+    const navigate = useNavigate();
+
+
+
     const [name, setName] = useState("");
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -12,12 +18,12 @@ const Signup = () => {
         axios.post("http://localhost:3001/createUser", { name, email, password, department })
             .then(result => {
                 console.log('Response:', result.data); // Log response data
+                navigate('/home'); // Navigate after successful post request
             })
             .catch(error => {
                 console.error('Error:', error); // Log error if there is one
             });
     }
-
 
     return (
         <>

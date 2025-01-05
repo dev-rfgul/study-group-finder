@@ -1,13 +1,27 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios'
 
 const Users = () => {
-    const [users, setUsers] = useState([
-        { name: "fahad", email: "raofahadgul785@gmail.com", age: 20 },
-        { name: "fahad2", email: "fahad2@example.com", age: 21 },
-        { name: "fahad3", email: "fahad3@example.com", age: 22 },
-        { name: "fahad4", email: "fahad4@example.com", age: 23 },
-    ]);
+    const [users, setUsers] = useState([]);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        axios.get('http://localhost:3001/getUsers')
+            .then(result => setUsers(result.data))
+            .catch(error => console.log(error))
+    }, [])  
+
+    const deleteUser = (id) => {
+        axios.delete(`http://localhost:3001/deleteUserByID/${id}`)
+            .then(result => {
+                console.log(result)
+                window.location.reload()
+            })
+            .catch(error => console.log(error))
+
+
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
@@ -31,10 +45,10 @@ const Users = () => {
                                     Name
                                 </th>
                                 <th className="py-3 px-4 text-left font-medium uppercase tracking-wider">
-                                    Email
+                                    Department
                                 </th>
                                 <th className="py-3 px-4 text-left font-medium uppercase tracking-wider">
-                                    Age
+                                    Email
                                 </th>
                                 <th className="py-3 px-4 text-left font-medium uppercase tracking-wider">
                                     Action
@@ -51,18 +65,22 @@ const Users = () => {
                                         {user.name}
                                     </td>
                                     <td className="py-3 px-4 text-gray-800 dark:text-gray-200">
-                                        {user.email}
+                                        {user.department}
                                     </td>
                                     <td className="py-3 px-4 text-gray-800 dark:text-gray-200">
-                                        {user.age}
+                                        {user.email}
                                     </td>
+
                                     <td className="py-3 px-4">
-                                        <Link to={"/admin/user/edit-user"} className="bg-green-400 px-4 py-2 rounded text-white">
+                                        <Link to={`/admin/user/editUser/${user._id}`} className="bg-green-400 px-4 py-2 rounded text-white">
                                             Edit User
                                         </Link>
-                                        <button className="bg-red-500 text-white py-1 px-3 rounded-md ml-2 hover:bg-red-600 dark:hover:bg-red-400">
+                                        <button
+                                            onClick={(e) => { deleteUser(user._id) }}
+                                            className="bg-red-500 text-white py-1 px-3 rounded-md ml-2 hover:bg-red-600 dark:hover:bg-red-400">
                                             Delete
                                         </button>
+
                                     </td>
                                 </tr>
                             ))}
