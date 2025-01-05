@@ -4,6 +4,7 @@ import Login from "./Components/Login";
 import Singup from "./Components/Singup";
 import Home from "./Components/Home"
 import SubjectPage from "./Components/SubjectPage";
+import WelcomePage from "./Components/Welcome";
 
 const App = () => {
     return (
@@ -20,6 +21,7 @@ const App = () => {
                         </Link>
                     </nav>
                     <Routes>
+                        <Route path="/" element={<WelcomePage />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/signup" element={<Singup />} />
                         <Route path="/home" element={<Home />} />
