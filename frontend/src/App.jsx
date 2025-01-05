@@ -5,8 +5,12 @@ import Singup from "./Components/Singup";
 import Home from "./Components/Home"
 import SubjectPage from "./Components/SubjectPage";
 import WelcomePage from "./Components/Welcome";
+import User from './admin/User'
+import UpdateUser from "./admin/UpdateUser";
+import Admin from "./Components/Admin";
 
 const App = () => {
+
     return (
 
         <>
@@ -22,6 +26,9 @@ const App = () => {
                     </nav>
                     <Routes>
                         <Route path="/" element={<WelcomePage />} />
+                        <Route path="/admin" element={<Admin />} />
+                        <Route path="/admin/user" element={<User />} />
+                        <Route path="/admin/user/edit-user" element={<UpdateUser />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/signup" element={<Singup />} />
                         <Route path="/home" element={<Home />} />
