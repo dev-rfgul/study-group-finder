@@ -18,7 +18,7 @@ const Signup = () => {
         axios.post("http://localhost:3001/createUser", { name, email, password, department })
             .then(result => {
                 console.log('Response:', result.data); // Log response data
-                navigate('/home'); // Navigate after successful post request
+                navigate('/login'); // Navigate after successful post request
             })
             .catch(error => {
                 console.error('Error:', error); // Log error if there is one

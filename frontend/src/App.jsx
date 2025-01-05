@@ -12,7 +12,6 @@ import Admin from "./Components/Admin";
 const App = () => {
 
     return (
-
         <>
             <Router>
                 <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -41,20 +40,3 @@ const App = () => {
 };
 
 export default App;
-
-
-// import React from 'react';
-
-// const App = () => {
-//     const apiUrl = import.meta.env.VITE_API_URL;
-//     const appTitle = import.meta.env.VITE_APP_TITLE;
-
-//     return (
-//         <div>
-//             <h1>{appTitle}</h1>
-//             <p>API URL: {apiUrl}</p>
-//         </div>
-//     );
-// };
-
-// export default App;

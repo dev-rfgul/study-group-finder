@@ -67,6 +67,7 @@ app.put('/updateUserByID/:id', (req, res) => {
         .then(users => res.json(users))
         .catch(error => res.json(error))
 })
+
 app.delete('/deleteUserByID/:id', (req, res) => {
     const id = req.params.id;
     UserModel.findByIdAndDelete({ _id: id })
@@ -97,6 +98,8 @@ app.post('/login', async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 });
+
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
