@@ -111,8 +111,14 @@ app.post('/login', async (req, res) => {
             return res.status(401).send("Invalid credentials"); // Generic error message
         }
 
-        // If login is successful
-        res.status(200).send("User logged in successfully");
+        // If login is successful, return user data along with a success message
+        const userData = {
+            email: user.email,
+            name: user.name,  // Add the user's name or any other info you need
+            // You can add more user details here
+        };
+
+        res.status(200).json(userData); // Send user data as a JSON response
     } catch (error) {
         console.error("Error during login:", error);
         res.status(500).send("Internal Server Error");

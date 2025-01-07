@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 
 // Helper function to highlight matched text
@@ -17,8 +17,12 @@ const highlightText = (text, query) => {
 };
 
 const Home = () => {
+    const location = useLocation();
+    const { user } = location.state || {}
+    console.log(user)
+
+    const [users, setUsers] = useState([])
     const [departments, setDepartments] = useState([]);
-    console.log(departments)
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
@@ -28,6 +32,11 @@ const Home = () => {
             .catch(error => console.log(error));
     }, []);
 
+    useEffect(() => {
+        axios.get('http://localhost:3001/getUsers')
+            .then(result => setUsers(result.data))
+            .catch(error => console.log(error))
+    }, [])
     // Filter departments based on search query
     const filteredDepartments = departments.filter(dept =>
         dept.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -37,10 +46,13 @@ const Home = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 p-8">
             <div className="text-center mb-12">
-                <h1 className="text-5xl font-extrabold text-white shadow-lg">
-                    Find Your Study Group
+                <h1 className="text-5xl text-white md:text-5xl font-extrabold">
+                <span className="bg-gradient-to-br from-purple-400 to-blue-400 text-transparent bg-clip-text">Welcome Back </span>MR {user.name}
                 </h1>
-                <p className="text-gray-200 mt-4 text-lg">
+                <h1 className="text-5xl md:text-7xl font-extrabold text-white">
+                    Find Your <span className="bg-gradient-to-br from-purple-400 to-blue-400 text-transparent bg-clip-text">Study Group</span>
+                </h1>
+                <p className="text-gray-200 mt-4 text-2xl ">
                     Discover study groups for different departments and enhance your learning.
                 </p>
             </div>
