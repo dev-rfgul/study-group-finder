@@ -11,17 +11,25 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const submit = (e) => { // Pass the event object here
-        e.preventDefault(); // Prevent default form submission
-        console.log("btn clicked")
+    const submit = (e) => {
+        e.preventDefault(); // Prevent default form submission behavior
+        console.log("Button clicked");
+
+        // Send a POST request to your backend with the provided email and password
         axios.post('http://localhost:3001/login', { email, password })
             .then((result) => {
                 console.log(result);
-                navigate('/admin/user')
 
+                // Check the email to determine the redirection path
+                if (email === "admin@admin.com") {
+                    navigate('/admin'); // Redirect to admin page
+                } else {
+                    navigate('/home'); // Redirect to user page
+                }
             })
             .catch((error) => {
-                console.error(error); // Updated to use `console.error` for errors
+                // Log the error for debugging purposes
+                console.error("Error during login:", error);
             });
     };
 

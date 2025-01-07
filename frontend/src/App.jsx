@@ -8,6 +8,7 @@ import WelcomePage from "./Components/Welcome";
 import User from './admin/User'
 import UpdateUser from "./admin/UpdateUser";
 import Admin from "./Components/Admin";
+import CreateGroup from './Components/CreateGroup'
 
 const App = () => {
 
@@ -25,6 +26,7 @@ const App = () => {
                     </nav>
                     <Routes>
                         <Route path="/" element={<WelcomePage />} />
+                        <Route path="/createGroup" element={<CreateGroup />} />
                         <Route path="/admin" element={<Admin />} />
                         <Route path="/admin/user" element={<User />} />
                         <Route path="/admin/user/editUser/:id" element={<UpdateUser />} />

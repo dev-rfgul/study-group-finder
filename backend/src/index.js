@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import UserModel from './models/user.model.js'
 import bcrypt from 'bcrypt'
+import GroupModel from './models/group.model.js';
 
 dotenv.config();  // Load environment variables from .env
 
@@ -47,6 +48,7 @@ app.post('/createUser', async (req, res) => {
         res.status(500).json({ message: 'Error creating user' });
     }
 });
+
 
 app.get('/getUsers', (req, res) => {
     UserModel.find({})
@@ -99,6 +101,33 @@ app.post('/login', async (req, res) => {
     }
 });
 
+
+app.post("/createGroup", async (req, res) => {
+    const { name, department, description, image, users } = req.body;
+    console.log(name, department, description, image)
+    try {
+        const newGroup = new GroupModel({
+            name,
+            description,
+            department,
+            image,
+            users
+        })
+        await newGroup.save();
+        res.status(201).json(newGroup);
+    }
+
+    catch (err) {
+        console.log(error)
+        res.status(500).json({ message: "error while creating group " })
+    }
+
+})
+app.get("/getGroups", async (req, res) => {
+    GroupModel.find({})
+        .then(groups => res.json(groups))
+        .catch(error => console.log(error))
+})
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
