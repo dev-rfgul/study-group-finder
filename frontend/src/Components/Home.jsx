@@ -79,6 +79,12 @@ const Home = () => {
                                 <p className="text-sm text-gray-600 dark:text-gray-400">
                                     {highlightText(dept.department, searchQuery)}
                                 </p>
+                                <button
+                                    type="submit"
+                                    className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 px-4 rounded-lg shadow-lg hover:opacity-90 transition-opacity duration-300 focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-offset-2"
+                                >
+                                    Join Now
+                                </button>
                             </div>
                             <div className="absolute top-0 left-0 w-full h-full bg-black opacity-25 group-hover:opacity-0 transition-opacity duration-300"></div>
                         </Link>

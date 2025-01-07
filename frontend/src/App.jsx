@@ -9,6 +9,8 @@ import User from './admin/User'
 import UpdateUser from "./admin/UpdateUser";
 import Admin from "./Components/Admin";
 import CreateGroup from './Components/CreateGroup'
+import Groups from './Components/Groups'
+import UpdateGroup from "./admin/UpdateGroup";
 
 const App = () => {
 
@@ -26,14 +28,16 @@ const App = () => {
                     </nav>
                     <Routes>
                         <Route path="/" element={<WelcomePage />} />
-                        <Route path="/createGroup" element={<CreateGroup />} />
+                        <Route path="/admin/createGroup" element={<CreateGroup />} />
                         <Route path="/admin" element={<Admin />} />
                         <Route path="/admin/user" element={<User />} />
+                        <Route path="/admin/groups" element={<Groups />} />
                         <Route path="/admin/user/editUser/:id" element={<UpdateUser />} />
+                        <Route path="/admin/group/editGroup/:id" element={<UpdateGroup />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/signup" element={<Singup />} />
                         <Route path="/home" element={<Home />} />
-                        <Route path="/:department" element={<SubjectPage />} />
+                        {/* <Route path="/:department" element={<SubjectPage />} /> */}
                     </Routes>
                 </div>
             </Router>

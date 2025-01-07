@@ -62,6 +62,12 @@ app.get('/getUserByID/:id', (req, res) => {
         .then(user => res.json(user))
         .catch(error => res.json(error));
 });
+app.get('/getGroupByID/:id', (req, res) => {
+    const id = req.params.id;
+    GroupModel.findById({ _id: id })
+        .then(group => res.status(200).json(group))
+        .catch(error => res.status(400).json(error))
+})
 
 app.put('/updateUserByID/:id', (req, res) => {
     const id = req.params.id;
@@ -70,13 +76,25 @@ app.put('/updateUserByID/:id', (req, res) => {
         .catch(error => res.json(error))
 })
 
+app.put('/updateGroupByID/:id', async (req, res) => {
+    const id = req.params.id;
+    GroupModel.findByIdAndUpdate({ _id: id }, { name: req.body.name, description: req.body.description, department: req.body.email, image: req.body.email })
+        .then(groups => res.status(200).json(groups))
+        .catch(error => res.staus(500).json(error))
+})
+
 app.delete('/deleteUserByID/:id', (req, res) => {
     const id = req.params.id;
     UserModel.findByIdAndDelete({ _id: id })
         .then(result => res.json(result))
         .catch(error => res.json(error))
 })
-
+app.delete('/deleteGroupByID/:id', (req, res) => {
+    const id = req.params.id;
+    GroupModel.findByIdAndDelete({ _id: id })
+        .then(result => res.status(200).json(result))
+        .catch(error => res.status(500).json(error))
+})
 app.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -128,6 +146,8 @@ app.get("/getGroups", async (req, res) => {
         .then(groups => res.json(groups))
         .catch(error => console.log(error))
 })
+
+
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
