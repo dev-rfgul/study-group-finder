@@ -23,13 +23,13 @@ const UpdateGroup = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const { name, description } = groupDetails;
+        const { name, description ,image,department} = groupDetails;
 
         axios
             .put(`http://localhost:3001/updateGroupByID/${id}`, { name, description, image, department })
             .then((result) => {
                 console.log(result);
-                navigate('/admin/group');
+                navigate('/admin/groups');
             })
             .catch((error) => {
                 console.error('Error updating group:', error);

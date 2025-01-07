@@ -18,6 +18,7 @@ const highlightText = (text, query) => {
 
 const Home = () => {
     const [departments, setDepartments] = useState([]);
+    console.log(departments)
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {

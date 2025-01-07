@@ -78,7 +78,7 @@ app.put('/updateUserByID/:id', (req, res) => {
 
 app.put('/updateGroupByID/:id', async (req, res) => {
     const id = req.params.id;
-    GroupModel.findByIdAndUpdate({ _id: id }, { name: req.body.name, description: req.body.description, department: req.body.email, image: req.body.email })
+    GroupModel.findByIdAndUpdate({ _id: id }, { name: req.body.name, description: req.body.description, department: req.body.department, image: req.body.image })
         .then(groups => res.status(200).json(groups))
         .catch(error => res.staus(500).json(error))
 })

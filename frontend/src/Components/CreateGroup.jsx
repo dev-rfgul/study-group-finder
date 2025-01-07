@@ -19,7 +19,7 @@ const Signup = () => {
         // console.log(name, department, description, image)
             .then(result => {
                 console.log('Response:', result.data); // Log response data
-                // navigate('/'); // Navigate after successful post request
+                navigate('/admin/groups'); // Navigate after successful post request
             })
             .catch(error => {
                 console.error('Error:', error); // Log error if there is one
