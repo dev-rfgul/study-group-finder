@@ -107,6 +107,7 @@ app.post('/login', async (req, res) => {
             name: user.name,  // Add the user's name or any other info you need
             department: user.department,
             id: user._id,
+            joinedGroups: user.joinedGroups,
             // You can add more user details here
         };
 
@@ -185,6 +186,7 @@ app.post('/joinGroup', async (req, res) => {
     }
 
 })
+app.delete('/removeGroup',async(req,res)=>{})
 
 
 
