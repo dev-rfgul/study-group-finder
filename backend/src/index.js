@@ -62,12 +62,7 @@ app.get('/getUserByID/:id', (req, res) => {
         .then(user => res.json(user))
         .catch(error => res.json(error));
 });
-app.get('/getGroupByID/:id', (req, res) => {
-    const id = req.params.id;
-    GroupModel.findById({ _id: id })
-        .then(group => res.status(200).json(group))
-        .catch(error => res.status(400).json(error))
-})
+
 
 app.put('/updateUserByID/:id', (req, res) => {
     const id = req.params.id;
@@ -89,12 +84,7 @@ app.delete('/deleteUserByID/:id', (req, res) => {
         .then(result => res.json(result))
         .catch(error => res.json(error))
 })
-app.delete('/deleteGroupByID/:id', (req, res) => {
-    const id = req.params.id;
-    GroupModel.findByIdAndDelete({ _id: id })
-        .then(result => res.status(200).json(result))
-        .catch(error => res.status(500).json(error))
-})
+
 app.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -115,6 +105,8 @@ app.post('/login', async (req, res) => {
         const userData = {
             email: user.email,
             name: user.name,  // Add the user's name or any other info you need
+            department: user.department,
+            id: user._id,
             // You can add more user details here
         };
 
@@ -124,8 +116,6 @@ app.post('/login', async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 });
-
-
 app.post("/createGroup", async (req, res) => {
     const { name, department, description, image, users } = req.body;
     console.log(name, department, description, image)
@@ -151,6 +141,49 @@ app.get("/getGroups", async (req, res) => {
     GroupModel.find({})
         .then(groups => res.json(groups))
         .catch(error => console.log(error))
+})
+app.delete('/deleteGroupByID/:id', (req, res) => {
+    const id = req.params.id;
+    GroupModel.findByIdAndDelete({ _id: id })
+        .then(result => res.status(200).json(result))
+        .catch(error => res.status(500).json(error))
+})
+app.get('/getGroupByID/:id', (req, res) => {
+    const id = req.params.id;
+    GroupModel.findById({ _id: id })
+        .then(group => res.status(200).json(group))
+        .catch(error => res.status(400).json(error))
+})
+
+app.post('/joinGroup', async (req, res) => {
+    const { userId, groupId } = req.body;
+
+    try {
+        const user = await UserModel.findById(userId);
+        const group = await GroupModel.findById(groupId);
+
+
+        if (!user || !group) {
+            return res.status(404).json({ message: "the user of group has not been found" })
+        }
+        if (user.joinedGroups.includes(groupId)) {
+            return res.status(400).json({ message: "the user had already joined the group" })
+        }
+
+
+        user.joinedGroups.push(groupId);
+        await user.save();
+
+
+        group.users.push(userId);
+        await group.save();
+
+        return res.status(200).json({ message: "the user has successfully joined the group" })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ message: "error while joining the group from line no 184" })
+    }
+
 })
 
 

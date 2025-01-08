@@ -82,7 +82,13 @@ const userSchema = new mongoose.Schema({
     name: String,
     email: String,
     password: String,
-    department:String,
+    department: String,
+    joinedGroups: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Group'
+        }
+    ]
 
 })
 

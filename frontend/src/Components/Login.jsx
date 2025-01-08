@@ -20,12 +20,13 @@ const Login = () => {
             .then((result) => {
                 console.log(result);
                 const userData = result.data;
-                console.log(userData)
+                // console.log(userData)
                 // Check the email to determine the redirection path
                 if (email === "admin@admin.com") {
                     navigate('/admin', { state: { user: userData } }); // Redirect to admin page
                 } else {
-                    navigate('/home', { state: { user: userData } }); // Redirect to user page
+                    navigate('/home', { state: { user: userData } });
+                    // Redirect to user page
                 }
             })
             .catch((error) => {
