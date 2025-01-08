@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
@@ -18,7 +17,6 @@ const Home = () => {
             .get("http://localhost:3001/getGroups")
             .then((result) => setGroups(result.data))
             .catch((error) => console.error("Error fetching groups:", error));
-            
     }, []);
 
     // Filter groups based on search query
@@ -51,8 +49,6 @@ const Home = () => {
 
             if (response.data.message) {
                 alert(response.data.message);
-                
-
                 // Update frontend to reflect the joined group
                 setGroups((prevGroups) =>
                     prevGroups.map((group) =>
@@ -69,13 +65,14 @@ const Home = () => {
             alert("An error occurred while trying to join the group.");
         }
     };
-    //hightlight the text based on the text coming from regex and search query
+
+    // Highlight the text based on the search query
     const highlightText = (text, query) => {
         if (!query) return text;
         const parts = text.split(new RegExp(`(${query})`, "gi"));
         return parts.map((part, index) =>
             part.toLowerCase() === query.toLowerCase() ? (
-                <span key={index} className="bg-yellow-300">
+                <span key={index} className="bg-yellow-300 font-semibold">
                     {part}
                 </span>
             ) : (
@@ -87,7 +84,6 @@ const Home = () => {
     // Handle chatbox functionality
     const handleGroupClick = (group) => {
         setActiveGroup(group); // Set the selected group as active
-        // Simulating fetching messages from the backend (you can replace with actual fetch logic)
         setMessages([
             { user: "John", text: "Hello, everyone!" },
             { user: "Sara", text: "Hi! How's it going?" },
@@ -97,14 +93,14 @@ const Home = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 p-8 flex">
             {/* Sidebar for Joined Groups */}
-            <div className="w-1/4 bg-white p-4 rounded-lg shadow-lg mr-8">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">Joined Groups</h2>
+            <div className="w-1/4 bg-white p-6 rounded-lg shadow-xl mr-8">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-6">Joined Groups</h2>
                 <div className="space-y-4">
                     {joinedGroups.length > 0 ? (
                         joinedGroups.map((group) => (
                             <div
                                 key={group._id}
-                                className="group bg-gray-200 p-4 rounded-lg cursor-pointer hover:bg-blue-500 hover:text-white"
+                                className="group bg-gray-200 p-4 rounded-lg cursor-pointer hover:bg-blue-500 hover:text-white transition duration-300 transform hover:scale-105"
                                 onClick={() => handleGroupClick(group)}
                             >
                                 {group.name}
@@ -121,6 +117,7 @@ const Home = () => {
                 <h1 className="text-5xl text-white font-extrabold mb-12 text-center">
                     Welcome Back {user?.name || "User"}
                 </h1>
+
                 {/* Search Field */}
                 <div className="max-w-md mx-auto mb-8">
                     <input
@@ -128,27 +125,43 @@ const Home = () => {
                         placeholder="Search by department or group name..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
                     />
                 </div>
 
                 {/* Chatbox Section */}
                 {activeGroup ? (
-                    <div className="bg-white p-6 rounded-lg shadow-lg">
-                        <h2 className="text-2xl font-semibold mb-4">{activeGroup.name} Chat</h2>
-                        <div className="mb-4 h-60 overflow-y-scroll p-4 border border-gray-200 rounded-lg">
+                    <div
+                        className="bg-white p-6 rounded-lg shadow-xl relative"
+                        style={{
+                            backgroundImage: `url(${activeGroup.image || "https://via.placeholder.com/150"})`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            backgroundBlendMode: "overlay",
+                            backgroundColor: "rgba(0, 0, 0, 0.6)", // Dark overlay for better contrast
+                        }}
+                    >
+                        <h2 className="text-2xl font-semibold text-white mb-4">{activeGroup.name} Chat</h2>
+                        {/* Display total members */}
+                        <p className="text-white mb-4">{activeGroup.users.length} Members</p>
+
+                        <div className="mb-4 h-60 overflow-y-scroll p-4 border border-gray-200 rounded-lg ">
                             {messages.map((msg, index) => (
-                                <div key={index} className="mb-2">
-                                    <strong>{msg.user}:</strong> {msg.text}
+                                <div key={index} className="mb-4">
+                                    <strong className="text-blue-600">{msg.user}:</strong>
+                                    <p className="text-gray-100">{msg.text}</p>
                                 </div>
                             ))}
                         </div>
+
                         <input
                             type="text"
                             placeholder="Type a message..."
-                            className="w-full p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4"
                         />
                     </div>
+
+
                 ) : (
                     <div className="text-center text-white">
                         <p>Select a group to start chatting!</p>
@@ -180,6 +193,10 @@ const Home = () => {
                                         <p className="text-sm text-gray-600">
                                             {highlightText(group.department, searchQuery)}
                                         </p>
+                                        <strong className="text-sm text-gray-600">
+                                        {group.users.length}    {group.users.length<=1?"Member":"members"}
+                                            
+                                        </strong>
                                         <button
                                             type="button"
                                             onClick={() => handleJoinGroup(group._id)}
