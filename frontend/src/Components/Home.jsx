@@ -221,7 +221,6 @@
 
 // export default Home;
 
-
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
@@ -306,42 +305,52 @@ const Home = () => {
         );
     };
 
-    // Handle chatbox functionality
-    const handleGroupClick = (group) => {
+    const handleGroupClick = async (group) => {
         setActiveGroup(group); // Set the selected group as active
-        setMessages([
-            { user: "John", text: "Hello, everyone!" },
-            { user: "Sara", text: "Hi! How's it going?" },
-            { user: "John", text: "Hello, everyone!" },
-            { user: "Sara", text: "Hi! How's it going?" },
-            { user: "John", text: "Hello, everyone!" },
-            { user: "Sara", text: "Hi! How's it going?" },
-            { user: "John", text: "Hello, everyone!" },
-            { user: "Sara", text: "Hi! How's it going?" },
-            { user: "John", text: "Hello, everyone!" },
-            { user: "Sara", text: "Hi! How's it going?" },
-            { user: "John", text: "Hello, everyone!" },
-            { user: "Sara", text: "Hi! How's it going?" },
-        ]);
+    
+        // Fetch messages whenever the active group changes
+        useEffect(() => {
+            if (activeGroup) {
+                const fetchMessages = async () => {
+                    try {
+                        const response = await axios.get(`http://localhost:3001/groups/${activeGroup._id}/messages`);
+                        if (response.status === 200) {
+                            setMessages(
+                                response.data.messages.map((msg) => ({
+                                    user: msg.userID.name,
+                                    text: msg.message,
+                                }))
+                            );
+                        } else {
+                            alert("Failed to fetch messages for this group.");
+                        }
+                    } catch (error) {
+                        console.error("Error fetching group messages:", error);
+                        alert("An error occurred while trying to fetch messages.");
+                    }
+                };
+
+                fetchMessages();
+            }
+        }, [activeGroup]);
     };
 
     // Handle sending a message
     const handleSendMessage = async () => {
-        if (!newMessage.trim()) return; // Don't send if the message is empty
-    
-        const url = "http://localhost:3001/sendMessage"; // Define the URL
-        console.log("Request URL:", url); // Log the URL before the request
-    
+        if (!newMessage.trim()) return; // Prevent sending empty messages
+
+        const url = "http://localhost:3001/sendMessage"; // Backend endpoint
+
         try {
             const response = await axios.post(url, {
-                groupId: activeGroup._id,
+                groupId: activeGroup._id, // Match field names with the backend schema
                 userId: user?.id,
-                message: newMessage,
+                messageContent: newMessage, // Ensure this matches the backend expected key
             });
-    
-            console.log("Response URL:", response.config.url); // Log the URL after the request
-    
-            if (response.data.success) {
+
+            console.log("Response:", response.data); // Log the response
+
+            if (response.status === 201) {
                 // Update the messages state to show the new message
                 setMessages((prevMessages) => [
                     ...prevMessages,
@@ -353,10 +362,14 @@ const Home = () => {
             }
         } catch (error) {
             console.error("Error sending message:", error);
-            alert("An error occurred while trying to send the message.");
+
+            if (error.response?.data?.error) {
+                alert(`Error: ${error.response.data.error}`);
+            } else {
+                alert("An error occurred while trying to send the message.");
+            }
         }
     };
-    
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 p-8 flex">

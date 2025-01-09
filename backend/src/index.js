@@ -191,35 +191,64 @@ app.delete('/removeGroup', async (req, res) => { })
 
 app.post('/sendMessage', async (req, res) => {
     const { userId, groupId, messageContent } = req.body;
+
+    // Validate request body
+    if (!userId || !groupId || !messageContent) {
+        return res.status(400).json({ error: "All fields (userId, groupId, messageContent) are required." });
+    }
+
     try {
+        // Correct field mapping for userID
         const newMessage = new MessageModel({
-            userId,
-            groupId,
-            message: messageContent
+            userID: userId, // Schema expects 'userID'
+            groupId,        // Schema expects 'groupId'
+            message: messageContent // Schema expects 'message'
         });
+
         await newMessage.save();
 
-
+        // Update group with the new message reference
         await GroupModel.findByIdAndUpdate(groupId, {
+            $push: { messages: newMessage._id }
+        });
+
+        // Update user with the message reference
+        await UserModel.findByIdAndUpdate(userId, {
             $push: {
-                messages: newMessage._id
-            }
-        })
-        await UserModel.findByIdAndUpdate(userId), {
-            $push: {
-                'messageSent': {
+                messageSent: {
                     groupId,
                     messages: newMessage._id
                 }
             }
-        }
-        res.status(201).json({ message: "message sent successfully" })
-    }
-    catch (error) {
+        });
 
-        res.status(500).json({ error: "Error while sending message" })
+        res.status(201).json({ message: "Message sent successfully." });
+    } catch (error) {
+        console.error("Error saving message:", error); // Logs the error for debugging
+        res.status(500).json({ error: error.message }); // Sends the error message to the client
     }
-})
+});
+app.get('/groups/:groupId/messages', async (req, res) => {
+    const { groupId } = req.params;
+
+    try {
+        const group = await GroupModel.findById(groupId).populate({
+            path: 'message',
+            populate: { path: 'userID', select: 'name' }, // Populate user details for each message
+        });
+
+        if (!group) {
+            return res.status(404).json({ error: "Group not found." });
+        }
+
+        res.status(200).json({ messages: group.message });
+    } catch (error) {
+        console.error("Error fetching group messages:", error);
+        res.status(500).json({ error: "Failed to fetch group messages." });
+    }
+});
+
+
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
