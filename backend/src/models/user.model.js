@@ -88,7 +88,20 @@ const userSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Group'
         }
+    ],
+    messageSent: [
+        {
+            groupId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Group'
+            },
+            message: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Message"
+            }
+        }
     ]
+
 
 })
 

@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import UserModel from './models/user.model.js'
 import bcrypt from 'bcrypt'
 import GroupModel from './models/group.model.js';
+import MessageModel from './models/message.model.js';
 
 dotenv.config();  // Load environment variables from .env
 
@@ -186,9 +187,39 @@ app.post('/joinGroup', async (req, res) => {
     }
 
 })
-app.delete('/removeGroup',async(req,res)=>{})
+app.delete('/removeGroup', async (req, res) => { })
+
+app.post('/sendMessage', async (req, res) => {
+    const { userId, groupId, messageContent } = req.body;
+    try {
+        const newMessage = new MessageModel({
+            userId,
+            groupId,
+            message: messageContent
+        });
+        await newMessage.save();
 
 
+        await GroupModel.findByIdAndUpdate(groupId, {
+            $push: {
+                messages: newMessage._id
+            }
+        })
+        await UserModel.findByIdAndUpdate(userId), {
+            $push: {
+                'messageSent': {
+                    groupId,
+                    messages: newMessage._id
+                }
+            }
+        }
+        res.status(201).json({ message: "message sent successfully" })
+    }
+    catch (error) {
+
+        res.status(500).json({ error: "Error while sending message" })
+    }
+})
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
