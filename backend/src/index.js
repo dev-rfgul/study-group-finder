@@ -49,43 +49,35 @@ app.post('/createUser', async (req, res) => {
         res.status(500).json({ message: 'Error creating user' });
     }
 });
-
-
 app.get('/getUsers', (req, res) => {
     UserModel.find({})
         .then(users => res.json(users))
         .catch(error => console.log(error))
 })
-
 app.get('/getUserByID/:id', (req, res) => {
     const id = req.params.id;
     UserModel.findById({ _id: id })
         .then(user => res.json(user))
         .catch(error => res.json(error));
 });
-
-
 app.put('/updateUserByID/:id', (req, res) => {
     const id = req.params.id;
     UserModel.findByIdAndUpdate({ _id: id }, { name: req.body.name, email: req.body.email, department: req.body.department, })
         .then(users => res.json(users))
         .catch(error => res.json(error))
 })
-
 app.put('/updateGroupByID/:id', async (req, res) => {
     const id = req.params.id;
     GroupModel.findByIdAndUpdate({ _id: id }, { name: req.body.name, description: req.body.description, department: req.body.department, image: req.body.image })
         .then(groups => res.status(200).json(groups))
         .catch(error => res.staus(500).json(error))
 })
-
 app.delete('/deleteUserByID/:id', (req, res) => {
     const id = req.params.id;
     UserModel.findByIdAndDelete({ _id: id })
         .then(result => res.json(result))
         .catch(error => res.json(error))
 })
-
 app.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -156,7 +148,6 @@ app.get('/getGroupByID/:id', (req, res) => {
         .then(group => res.status(200).json(group))
         .catch(error => res.status(400).json(error))
 })
-
 app.post('/joinGroup', async (req, res) => {
     const { userId, groupId } = req.body;
 
@@ -187,8 +178,32 @@ app.post('/joinGroup', async (req, res) => {
     }
 
 })
-app.delete('/removeGroup', async (req, res) => { })
+app.delete('/removeGroup', async (req, res) => { 
+    const { userId, groupId } = req.body;
 
+    try {
+        const user = await UserModel.findById(userId);
+        const group = await GroupModel.findById(groupId);
+
+        if (!user || !group) {
+            return res.status(404).json({ message: "the user of group has not been found" })
+        }
+        if (!user.joinedGroups.includes(groupId)) {
+            return res.status(400).json({ message: "the user had not joined the group" })
+        }
+
+        user.joinedGroups = user.joinedGroups.filter((groupID) => groupID !== groupId);
+        await user.save();
+
+        group.users = group.users.filter((userID) => userID !== userId);
+        await group.save();
+
+        return res.status(200).json({ message: "the user has successfully removed from the group" })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ message: "error while removing the user from the group" })
+    }
+})
 app.post('/sendMessage', async (req, res) => {
     const { userId, groupId, messageContent } = req.body;
 
