@@ -8,16 +8,16 @@ import GroupCard from "../utils/Cards";
 const Home = () => {
     const location = useLocation();
     const { user } = location.state || {}; // Retrieve user from location state
+    console.log(user)
 
     const [groups, setGroups] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [activeGroup, setActiveGroup] = useState(null); // State for the active group
     const [messages, setMessages] = useState([]); // State for chatbox messages
     const [newMessage, setNewMessage] = useState(""); // State for the message input field
-    const [userID, setUserID] = useState()
+    const [userID, setUserID] = useState(user.id)
     const [groupID, setGroupID] = useState()
     const [User, setUser] = useState();
-
     // Fetch groups from the backend
     useEffect(() => {
         axios
@@ -77,34 +77,34 @@ const Home = () => {
 
     const handleGroupClick = async (group) => {
         setActiveGroup(group); // Set the selected group as active
-
+        const groupID = group._id; // Extract group ID from the group object
+        setGroupID(groupID); // Update groupID state
 
         // Fetch messages whenever the active group changes
-        useEffect(() => {
-            if (activeGroup) {
-                const fetchMessages = async () => {
-                    try {
-                        const response = await axios.get(`http://localhost:3001/groups/${activeGroup._id}/messages`);
-                        if (response.status === 200) {
-                            setMessages(
-                                response.data.messages.map((msg) => ({
-                                    user: msg.userID.name,
-                                    text: msg.message,
-                                }))
-                            );
-                        } else {
-                            alert("Failed to fetch messages for this group.");
-                        }
-                    } catch (error) {
-                        console.error("Error fetching group messages:", error);
-                        alert("An error occurred while trying to fetch messages.");
-                    }
-                };
-
-                fetchMessages();
+        const fetchMessages = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3001/groups/${activeGroup._id}/messages`);
+                if (response.status === 200) {
+                    setMessages(
+                        response.data.messages.map((msg) => ({
+                            user: msg.userID.name,
+                            text: msg.message,
+                        }))
+                    );
+                } else {
+                    alert("Failed to fetch messages for this group.");
+                }
+            } catch (error) {
+                console.error("Error fetching group messages:", error);
+                alert("An error occurred while trying to fetch messages.");
             }
-        }, [activeGroup]);
+        };
+
+        // Fetch messages based on the group ID directly (no need to wait for state update)
+        fetchMessages();
     };
+
+
 
     // Handle sending a message
     const handleSendMessage = async () => {
@@ -141,9 +141,6 @@ const Home = () => {
             }
         }
     };
-
-    //handle group leave
-    // 
     const handleRemoveGroup = async (e) => {
         e.preventDefault();
 
@@ -152,13 +149,11 @@ const Home = () => {
             return;
         }
 
+
         try {
-            const response = await axios.delete("http://localhost:3001/removeGroup", {
-                data: {
-                    groupId: activeGroup._id,
-                    userId: user?.id,
-                },
-            });
+            const url = `http://localhost:3001/removeGroup/${activeGroup._id}/${userID}`
+            console.log(url)
+            const response = await axios.post(url);
 
             if (response.status === 200) {
                 alert(response.data.message || "Group removed successfully!");
@@ -250,10 +245,10 @@ const Home = () => {
                 )}
 
                 {/* Available Groups Section */}
-                <GroupCard 
-                notJoinedGroups={notJoinedGroups}
-                searchQuery={searchQuery}
-                handleJoinGroup={handleJoinGroup}
+                <GroupCard
+                    notJoinedGroups={notJoinedGroups}
+                    searchQuery={searchQuery}
+                    handleJoinGroup={handleJoinGroup}
                 />
             </div>
         </div>

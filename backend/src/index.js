@@ -178,32 +178,38 @@ app.post('/joinGroup', async (req, res) => {
     }
 
 })
-app.delete('/removeGroup', async (req, res) => { 
-    const { userId, groupId } = req.body;
-
+app.post('/removeGroup/:groupID/:userID', async (req, res) => {
+    const { groupID, userID } = req.params;  // Use req.params to get the groupID and userID
+    if (!groupID || !userID) {
+        return res.status(400).json({ message: "Both Group and User IDs are required" });
+    }
     try {
-        const user = await UserModel.findById(userId);
-        const group = await GroupModel.findById(groupId);
+        const user = await UserModel.findById(userID);
+        const group = await GroupModel.findById(groupID);
 
         if (!user || !group) {
-            return res.status(404).json({ message: "the user of group has not been found" })
-        }
-        if (!user.joinedGroups.includes(groupId)) {
-            return res.status(400).json({ message: "the user had not joined the group" })
+            return res.status(404).json({ message: "User or Group not found" });
         }
 
-        user.joinedGroups = user.joinedGroups.filter((groupID) => groupID !== groupId);
+        if (!user.joinedGroups.includes(groupID)) {
+            return res.status(400).json({ message: "User has not joined the group" });
+        }
+
+        // Remove the group from user's joinedGroups array
+        user.joinedGroups = user.joinedGroups.filter((id) => id !== groupID);
         await user.save();
 
-        group.users = group.users.filter((userID) => userID !== userId);
+        // Remove the user from the group's users array
+        group.users = group.users.filter((id) => id !== userID);
         await group.save();
 
-        return res.status(200).json({ message: "the user has successfully removed from the group" })
+        return res.status(200).json({ message: "User successfully removed from the group" });
     } catch (error) {
-        console.error(error)
-        res.status(500).json({ message: "error while removing the user from the group" })
+        console.error(error);
+        res.status(500).json({ message: "Error while removing the user from the group" });
     }
-})
+});
+
 app.post('/sendMessage', async (req, res) => {
     const { userId, groupId, messageContent } = req.body;
 
