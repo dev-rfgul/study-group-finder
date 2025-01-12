@@ -196,11 +196,11 @@ app.post('/removeGroup/:groupID/:userID', async (req, res) => {
         }
 
         // Remove the group from user's joinedGroups array
-        user.joinedGroups = user.joinedGroups.filter((id) => id !== groupID);
+        user.joinedGroups = user.joinedGroups.filter((id) => id.toString() !== groupID.toString());
         await user.save();
 
         // Remove the user from the group's users array
-        group.users = group.users.filter((id) => id !== userID);
+        group.users = group.users.filter((id) => id.toString() !== userID.toString());
         await group.save();
 
         return res.status(200).json({ message: "User successfully removed from the group" });
