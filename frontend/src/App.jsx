@@ -9,6 +9,7 @@ import UpdateUser from "./admin/UpdateUser";
 import UpdateGroup from "./admin/UpdateGroup";
 import WelcomePage from "./Components/Welcome";
 import CreateGroup from './Components/CreateGroup'
+import Card from './utils/Cards'
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 const App = () => {
@@ -50,6 +51,7 @@ const App = () => {
                         <Route path="/login" element={<Login />} />
                         <Route path="/signup" element={<Singup />} />
                         <Route path="/home" element={<Home />} />
+                        <Route path="/groups" element={<Card/>} />
                     </Routes>
                 </div>
             </Router>
