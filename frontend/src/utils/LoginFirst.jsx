@@ -46,6 +46,7 @@ const LoginPromptPopup = ({ closePopup }) => {
                         className="text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-br from-blue-500 to-purple-600 mb-6 text-center"
                     >
                         Log in to access the group and join the conversation!
+                        
                     </h2>
 
 
