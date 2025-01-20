@@ -27,10 +27,10 @@ const Home = () => {
         if (user && user.id) {
             // Save the user ID in localStorage
             localStorage.setItem("userID", JSON.stringify(user.id));
+            
             setUserID(user.id); // Update state
         }
-    }, [user]); // Run effect when `user` changes
-
+    },);
 
     useEffect(() => {
         if (!userID) return; // If no userID is provided, do nothing
@@ -43,12 +43,12 @@ const Home = () => {
                 setError(null); // Clear any previous errors
             } catch (err) {
                 setError("Error fetching user data.");
-                setUsers(null); // Clear user data on error
+                setUsers(null); // Clear user data on                                       
             }
         };
 
         fetchUserByID();
-    }, [users]);
+    }, [userID,users]);
 
     // useEffect(() => {
     //     setIsLoading(true); // Set loading to true when data fetch starts
@@ -97,7 +97,7 @@ const Home = () => {
     const handleJoinGroup = async (groupId) => {
         setIsLoading(true)
         if (users?.joinedGroups?.includes(groupId)) {
-            alert("You have already joined this group!");
+            // alert("You have already joined this group!");
             setIsLoading(false)
             return; // Prevent further API calls
         }
@@ -110,7 +110,7 @@ const Home = () => {
             });
 
             if (response.data.message) {
-                alert(response.data.message);
+                // alert(response.data.message);
                 setIsLoading(false)
                 // Update frontend to reflect the joined group
                 setGroups((prevGroups) =>
@@ -121,12 +121,11 @@ const Home = () => {
                     )
                 );
             } else {
-                alert("Failed to join the group.");
-
+                // alert("Failed to join the group.");
             }
         } catch (error) {
             console.error("Error joining the group:", error);
-            alert("An error occurred while trying to join the group.");
+            // alert("An error occurred while trying to join the group.");
 
         }
     };
@@ -154,7 +153,7 @@ const Home = () => {
                 setIsLoading(false); // Set loading to false after messages are fetched
             } catch (error) {
                 console.error("Error fetching group messages:", error);
-                // alert("An error occurred while trying to fetch messages.");
+                alert("An error occurred while trying to fetch messages.");
                 setIsLoading(false); // Handle error by stopping the loader
             }
         };
@@ -185,7 +184,7 @@ const Home = () => {
                 ]);
                 setNewMessage(""); // Clear the input field
             } else {
-                alert("Failed to send the message.");
+                // alert("Failed to send the message.");
             }
         } catch (error) {
             console.error("Error sending message:", error);
@@ -193,7 +192,7 @@ const Home = () => {
             if (error.response?.data?.error) {
                 alert(`Error: ${error.response.data.error}`);
             } else {
-                alert("An error occurred while trying to send the message.");
+                // alert("An error occurred while trying to send the message.");
             }
         }
     };
@@ -202,7 +201,7 @@ const Home = () => {
         e.preventDefault();
 
         if (!activeGroup) {
-            alert("Please select a group to remove.");
+            // alert("Please select a group to remove.");
 
             return;
         }
@@ -237,7 +236,7 @@ const Home = () => {
                 setActiveGroup(null);
                 setMessages([]);
             } else {
-                alert("Failed to remove the group.");
+                // alert("Failed to remove the group.");
             }
         } catch (error) {
             console.error("Error removing group:", error);
