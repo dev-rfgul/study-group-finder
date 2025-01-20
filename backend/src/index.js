@@ -47,7 +47,7 @@ app.post('/createUser', async (req, res) => {
 
         const token = newUser.generateToken();
         // Send back the created user
-        res.status(201).json({ "newUser":newUser, "token":token });
+        res.status(201).json({ "newUser": newUser, "token": token });
     } catch (error) {
         console.log('Error creating user:', error);
         res.status(500).json({ message: 'Error creating user' });
@@ -107,8 +107,15 @@ app.post('/login', async (req, res) => {
             joinedGroups: user.joinedGroups,
             // You can add more user details here
         };
+        const token = user.generateToken();
+        console.log(token)
 
-        res.status(200).json(userData); // Send user data as a JSON response
+        res.cookie("jwtoken", token, {
+            expires: new Date(Date.now() + 25892000000),
+            httpOnly:true, 
+        })
+
+        res.status(200).json(userData ); // Send user data as a JSON response
     } catch (error) {
         console.error("Error during login:", error);
         res.status(500).send("Internal Server Error");
