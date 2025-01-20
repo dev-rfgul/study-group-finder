@@ -27,6 +27,9 @@ mongoose.connect(mongodbURL, {
         console.log('Error connecting to MongoDB:', err);
     });
 
+app.get('/notification', async (req, res) => {
+    res.send("hello world the server is running")
+})
 app.post('/createUser', async (req, res) => {
     const { name, email, password, department } = req.body;
     const salt = await bcrypt.genSalt(10);
@@ -42,8 +45,9 @@ app.post('/createUser', async (req, res) => {
         // Save the user to MongoDB
         await newUser.save();
 
+        const token = newUser.generateToken();
         // Send back the created user
-        res.status(201).json(newUser);
+        res.status(201).json({ "newUser":newUser, "token":token });
     } catch (error) {
         console.log('Error creating user:', error);
         res.status(500).json({ message: 'Error creating user' });
@@ -209,7 +213,6 @@ app.post('/removeGroup/:groupID/:userID', async (req, res) => {
         res.status(500).json({ message: "Error while removing the user from the group" });
     }
 });
-
 app.post('/sendMessage', async (req, res) => {
     const { userId, groupId, messageContent } = req.body;
 
