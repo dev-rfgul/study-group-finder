@@ -13,6 +13,7 @@ const Home = () => {
 
     const [groups, setGroups] = useState([]);
     const [users, setUsers] = useState([]);
+    const [error, setError] = useState()
     const [searchQuery, setSearchQuery] = useState("");
     const [activeGroup, setActiveGroup] = useState(null); // State for the active group
     const [messages, setMessages] = useState([]); // State for chatbox messages
@@ -75,7 +76,7 @@ const Home = () => {
                 setIsLoading(false); // Handle error by stopping the loader
             });
     }, []);
-    
+
 
     // console.log(JSON.stringify(groups[0]))
     // console.log((groups[0]))
@@ -135,18 +136,18 @@ const Home = () => {
         setActiveGroup(group); // Set the selected group as active
         const groupID = group._id; // Extract group ID from the group object
         setGroupID(groupID); // Update groupID state
-        
+
         try {
             // Fetch messages for the selected group
             const response = await axios.get(`http://localhost:3001/getGroupByID/${groupID}`);
-            
+
             if (response.status === 200) {
                 // For each message, fetch the user name using the userID
                 const messagesWithUsernames = await Promise.all(response.data.messages.map(async (msg) => {
                     try {
                         // Fetch the user by their ID
                         const userResponse = await axios.get(`http://localhost:3001/getUserByID/${msg.userID}`);
-                        
+
                         if (userResponse.status === 200) {
                             return {
                                 user: userResponse.data.name, // Set the user's name here
@@ -162,7 +163,7 @@ const Home = () => {
                         return { user: "Unknown", text: msg.message, createdAt: msg.createdAt };
                     }
                 }));
-                
+
                 // Update the messages state with the user names
                 setMessages(messagesWithUsernames);
             } else {
@@ -173,7 +174,7 @@ const Home = () => {
             alert("An error occurred while trying to fetch messages.");
         }
     };
-    
+
     // console.log(groupID)
 
     // Handle sending a message
