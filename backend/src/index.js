@@ -108,14 +108,14 @@ app.post('/login', async (req, res) => {
             // You can add more user details here
         };
         const token = user.generateToken();
-        console.log(token)
+        // console.log(token)
 
         res.cookie("jwtoken", token, {
             expires: new Date(Date.now() + 25892000000),
-            httpOnly:true, 
+            // httpOnly:true, 
         })
 
-        res.status(200).json(userData ); // Send user data as a JSON response
+        res.status(200).json(userData); // Send user data as a JSON response
     } catch (error) {
         console.error("Error during login:", error);
         res.status(500).send("Internal Server Error");
@@ -229,53 +229,46 @@ app.post('/sendMessage', async (req, res) => {
     }
 
     try {
-        // Correct field mapping for userID
-        const newMessage = new MessageModel({
-            userID: userId, // Schema expects 'userID'
-            groupId,        // Schema expects 'groupId'
-            message: messageContent // Schema expects 'message'
-        });
-
-        await newMessage.save();
-
-        // Update group with the new message reference
-        await GroupModel.findByIdAndUpdate(groupId, {
-            $push: { messages: newMessage._id }
-        });
-
-        // Update user with the message reference
-        await UserModel.findByIdAndUpdate(userId, {
-            $push: {
-                messageSent: {
-                    groupId,
-                    messages: newMessage._id
-                }
-            }
-        });
-
-        res.status(201).json({ message: "Message sent successfully." });
-    } catch (error) {
-        console.error("Error saving message:", error); // Logs the error for debugging
-        res.status(500).json({ error: error.message }); // Sends the error message to the client
-    }
-});
-app.get('/groups/:groupId/messages', async (req, res) => {
-    const { groupId } = req.params;
-
-    try {
-        const group = await GroupModel.findById(groupId).populate({
-            path: 'message',
-            populate: { path: 'userID', select: 'name' }, // Populate user details for each message
-        });
+        // Find the group and add the message
+        const group = await GroupModel.findById(groupId);
 
         if (!group) {
             return res.status(404).json({ error: "Group not found." });
         }
 
-        res.status(200).json({ messages: group.message });
+        group.messages.push({
+            userID: userId,
+            message: messageContent,
+            createdAt: new Date(),
+        });
+
+        await group.save();
+
+        res.status(201).json({ message: "Message sent successfully." });
     } catch (error) {
-        console.error("Error fetching group messages:", error);
-        res.status(500).json({ error: "Failed to fetch group messages." });
+        console.error("Error saving message:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+app.get("/:groupID/messages", async (req, res) => {
+    const { groupID } = req.params;
+
+    try {
+        // Find the group to make sure it exists
+        const group = await GroupModel.findById(groupID);
+        if (!group) {
+            return res.status(404).json({ error: "Group not found" });
+        }
+
+        // Find messages related to the group
+        const messages = await MessageModel.find({ groupID: groupID })
+            .populate("userID", "name") // Populate the user information (like name)
+            .sort({ createdAt: 1 }); // Sort messages in ascending order by date (oldest first)
+
+        res.status(200).json({ messages });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "An error occurred while fetching messages" });
     }
 });
 

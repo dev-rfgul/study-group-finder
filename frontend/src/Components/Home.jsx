@@ -27,7 +27,7 @@ const Home = () => {
         if (user && user.id) {
             // Save the user ID in localStorage
             localStorage.setItem("userID", JSON.stringify(user.id));
-            
+
             setUserID(user.id); // Update state
         }
     },);
@@ -48,21 +48,7 @@ const Home = () => {
         };
 
         fetchUserByID();
-    }, [userID,users]);
-
-    // useEffect(() => {
-    //     setIsLoading(true); // Set loading to true when data fetch starts
-    //     axios.get('http://localhost:3001/getUsers')
-    //         .then(result => {
-    //             setUsers(result.data);
-    //             setIsLoading(false); // Set loading to false after data is fetched
-    //         })
-    //         .catch(error => {
-    //             console.log(error);
-    //             setIsLoading(false); // Handle error by stopping the loader
-    //         });
-    // }, []);
-    // // console.log(users);
+    }, [userID, users]);
 
     useEffect(() => {
         setIsLoading(true); // Set loading to true when data fetch starts
@@ -71,13 +57,28 @@ const Home = () => {
             .then((result) => {
                 setGroups(result.data);
                 setIsLoading(false); // Set loading to false after data is fetched
+                if (result.status === 200) {
+                    // Assuming you have a way to fetch user details (like a user list or API call)
+                    setMessages(
+                        result.data.messages.map((msg) => ({
+                            user: msg.userID, // You may want to replace this with actual user info if available
+                            text: msg.message,
+                            createdAt: msg.createdAt,
+                        }))
+                    );
+                } else {
+                    console.log("Failed to fetch messages for this group.");
+                }
             })
             .catch((error) => {
                 console.error("Error fetching groups:", error);
                 setIsLoading(false); // Handle error by stopping the loader
             });
     }, []);
+    
 
+    console.log(JSON.stringify(groups[0]))
+    console.log((groups[0]))
     // Filter groups based on search query
     const filteredGroups = groups.filter(
         (group) =>
@@ -134,32 +135,29 @@ const Home = () => {
         setActiveGroup(group); // Set the selected group as active
         const groupID = group._id; // Extract group ID from the group object
         setGroupID(groupID); // Update groupID state
-
-        // Fetch messages whenever the active group changes
-        const fetchMessages = async () => {
-            try {
-                setIsLoading(true); // Set loading to true when fetching messages
-                const response = await axios.get(`http://localhost:3001/groups/${activeGroup._id}/messages`);
-                if (response.status === 200) {
-                    setMessages(
-                        response.data.messages.map((msg) => ({
-                            user: msg.userID.name,
-                            text: msg.message,
-                        }))
-                    );
-                } else {
-                    console.log("Failed to fetch messages for this group.");
-                }
-                setIsLoading(false); // Set loading to false after messages are fetched
-            } catch (error) {
-                console.error("Error fetching group messages:", error);
-                alert("An error occurred while trying to fetch messages.");
-                setIsLoading(false); // Handle error by stopping the loader
+    
+        try {
+            // Fetch messages for the selected group
+            const response = await axios.get(`http://localhost:3001/getGroupByID/${groupID}`);
+            
+            if (response.status === 200) {
+                // Update the messages state with the fetched messages
+                setMessages(
+                    response.data.messages.map((msg) => ({
+                        user: msg.userID.name, 
+                        text: msg.message,
+                        createdAt: msg.createdAt,
+                    }))
+                );
+            } else {
+                console.log("Failed to fetch messages for this group.");
             }
-        };
-
-        fetchMessages();
+        } catch (error) {
+            console.error("Error fetching group messages:", error);
+            alert("An error occurred while trying to fetch messages.");
+        }
     };
+    console.log(groupID)
 
     // Handle sending a message
     const handleSendMessage = async () => {

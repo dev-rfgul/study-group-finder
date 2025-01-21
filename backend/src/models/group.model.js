@@ -1,6 +1,5 @@
-
-
 import mongoose from "mongoose";
+
 const groupSchema = new mongoose.Schema({
     name: String,
     department: String,
@@ -12,12 +11,23 @@ const groupSchema = new mongoose.Schema({
             ref: 'User'
         }
     ],
-    message: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Message',
-    }]
+    messages: [
+        {
+            userID: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+            },
+            message: {
+                type: String,
+                required: true,
+            },
+            createdAt: {
+                type: Date,
+                default: Date.now, // Automatically sets the timestamp
+            }
+        }
+    ]
+});
 
-})
-
-const GroupModel = mongoose.model("groups", groupSchema)
+const GroupModel = mongoose.model("groups", groupSchema);
 export default GroupModel;
