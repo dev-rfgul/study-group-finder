@@ -230,7 +230,7 @@ const Home = () => {
             const response = await axios.post(url);
 
             if (response.status === 200) {
-                alert(response.data.message || "Group removed successfully!");
+                // alert(response.data.message || "Group removed successfully!");
                 // Update groups state
                 setGroups((prevGroups) =>
                     prevGroups.map((group) =>
@@ -251,6 +251,7 @@ const Home = () => {
                 // Clear active group and messages
                 setActiveGroup(null);
                 setMessages([]);
+                setIsLoading(false)
             } else {
                 // alert("Failed to remove the group.");
             }
