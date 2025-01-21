@@ -9,7 +9,7 @@ import LoadingScreen from "../utils/Loading";
 const Home = () => {
     const location = useLocation();
     const { user } = location.state || {}; // Retrieve user from location state
-    // console.log(user);
+    console.log(user);
 
     const [groups, setGroups] = useState([]);
     const [users, setUsers] = useState([]);
