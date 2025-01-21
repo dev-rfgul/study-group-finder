@@ -38,7 +38,7 @@ const Home = () => {
         const fetchUserByID = async () => {
             try {
                 const response = await axios.get(`http://localhost:3001/getUserByID/${userID}`);
-                console.log(response.data)
+                // console.log(response.data)
                 setUsers(response.data); // Set the user data in state
                 setError(null); // Clear any previous errors
             } catch (err) {
@@ -77,8 +77,8 @@ const Home = () => {
     }, []);
     
 
-    console.log(JSON.stringify(groups[0]))
-    console.log((groups[0]))
+    // console.log(JSON.stringify(groups[0]))
+    // console.log((groups[0]))
     // Filter groups based on search query
     const filteredGroups = groups.filter(
         (group) =>
@@ -135,20 +135,36 @@ const Home = () => {
         setActiveGroup(group); // Set the selected group as active
         const groupID = group._id; // Extract group ID from the group object
         setGroupID(groupID); // Update groupID state
-    
+        
         try {
             // Fetch messages for the selected group
             const response = await axios.get(`http://localhost:3001/getGroupByID/${groupID}`);
             
             if (response.status === 200) {
-                // Update the messages state with the fetched messages
-                setMessages(
-                    response.data.messages.map((msg) => ({
-                        user: msg.userID.name, 
-                        text: msg.message,
-                        createdAt: msg.createdAt,
-                    }))
-                );
+                // For each message, fetch the user name using the userID
+                const messagesWithUsernames = await Promise.all(response.data.messages.map(async (msg) => {
+                    try {
+                        // Fetch the user by their ID
+                        const userResponse = await axios.get(`http://localhost:3001/getUserByID/${msg.userID}`);
+                        
+                        if (userResponse.status === 200) {
+                            return {
+                                user: userResponse.data.name, // Set the user's name here
+                                text: msg.message,
+                                createdAt: msg.createdAt,
+                            };
+                        } else {
+                            console.log("Failed to fetch user for message.");
+                            return { user: "Unknown", text: msg.message, createdAt: msg.createdAt };
+                        }
+                    } catch (userError) {
+                        console.error("Error fetching user:", userError);
+                        return { user: "Unknown", text: msg.message, createdAt: msg.createdAt };
+                    }
+                }));
+                
+                // Update the messages state with the user names
+                setMessages(messagesWithUsernames);
             } else {
                 console.log("Failed to fetch messages for this group.");
             }
@@ -157,7 +173,8 @@ const Home = () => {
             alert("An error occurred while trying to fetch messages.");
         }
     };
-    console.log(groupID)
+    
+    // console.log(groupID)
 
     // Handle sending a message
     const handleSendMessage = async () => {

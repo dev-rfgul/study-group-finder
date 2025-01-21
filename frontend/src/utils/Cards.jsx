@@ -2,6 +2,8 @@ import React from 'react'
 
 const GroupCard = ({ notJoinedGroups, searchQuery, handleJoinGroup }) => {
 
+    
+
     // Highlight the text based on the search query
     const highlightText = (text, query) => {
         if (!query) return text;
