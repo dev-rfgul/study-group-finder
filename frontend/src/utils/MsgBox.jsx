@@ -1,5 +1,5 @@
 
-import React from "react";
+import { React } from "react";
 
 const MsgBox = ({ activeGroup, messages, newMessage, setNewMessage, handleSendMessage, handleRemoveGroup }) => {
     const formatDate = (timestamp) => {

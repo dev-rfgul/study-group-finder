@@ -136,7 +136,6 @@ const Home = () => {
         setActiveGroup(group); // Set the selected group as active
         const groupID = group._id; // Extract group ID from the group object
         setGroupID(groupID); // Update groupID state
-
         try {
             // Fetch messages for the selected group
             const response = await axios.get(`http://localhost:3001/getGroupByID/${groupID}`);
