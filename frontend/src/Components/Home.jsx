@@ -9,7 +9,7 @@ import LoadingScreen from "../utils/Loading";
 const Home = () => {
     const location = useLocation();
     const { user } = location.state || {}; // Retrieve user from location state
-    console.log(user);
+    // console.log(user);
 
     const [groups, setGroups] = useState([]);
     const [users, setUsers] = useState([]);
@@ -212,6 +212,7 @@ const Home = () => {
         }
     };
 
+ 
     const handleRemoveGroup = async (e) => {
         e.preventDefault();
 
@@ -309,6 +310,7 @@ const Home = () => {
                         activeGroup={activeGroup}
                         messages={messages}
                         newMessage={newMessage}
+                        groupID={groupID}
                         setNewMessage={setNewMessage}
                         handleSendMessage={handleSendMessage}
                         handleRemoveGroup={handleRemoveGroup}
