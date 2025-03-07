@@ -13,7 +13,7 @@ const Login = () => {
         console.log("Button clicked");
 
         // Send a POST request to your backend with the provided email and password
-        axios.post('http://localhost:3001/login', { email, password })
+        axios.post(`${import.meta.env.VITE_BASE_URL}/login`, { email, password })
             .then((result) => {
                 console.log(result);
                 const userData = result.data;

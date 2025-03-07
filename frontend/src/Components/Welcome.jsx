@@ -13,7 +13,7 @@ const WelcomePage = () => {
 
     useEffect(() => {
         axios
-            .get("http://localhost:3001/getGroups")
+            .get(`${import.meta.env.VITE_BASE_URL}/getGroups`)
             .then((response) => setGroups(response.data))
             .catch((error) => console.error("Error fetching groups:", error));
     }, []);

@@ -15,7 +15,7 @@ const Signup = () => {
 
     const submit = (e) => {
         e.preventDefault();
-        axios.post("http://localhost:3001/createUser", { name, email, password, department })
+        axios.post(`${import.meta.env.VITE_BASE_URL}/createUser`, { name, email, password, department })
             .then(result => {
                 console.log('Response:', result.data); // Log response data
                 navigate('/login'); // Navigate after successful post request
