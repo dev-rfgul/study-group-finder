@@ -38,7 +38,7 @@ const Home = () => {
 
         const fetchUserByID = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/getUserByID/${userID}`);
+                const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/getUserByID/${userID}`);
                 // console.log(response.data)
                 setUsers(response.data); // Set the user data in state
                 setError(null); // Clear any previous errors
@@ -54,7 +54,7 @@ const Home = () => {
     useEffect(() => {
         setIsLoading(true); // Set loading to true when data fetch starts
         axios
-            .get("http://localhost:3001/getGroups")
+            .get(`${import.meta.env.VITE_BASE_UR}/getGroups`)
             .then((result) => {
                 setGroups(result.data);
                 setIsLoading(false); // Set loading to false after data is fetched
@@ -106,7 +106,7 @@ const Home = () => {
 
         try {
             setIsLoading(true)
-            const response = await axios.post("http://localhost:3001/joinGroup", {
+            const response = await axios.post(`${import.meta.env.VITE_BASE_UR}/joinGroup`, {
                 userId: user?.id,
                 groupId,
             });
@@ -138,14 +138,14 @@ const Home = () => {
         setGroupID(groupID); // Update groupID state
         try {
             // Fetch messages for the selected group
-            const response = await axios.get(`http://localhost:3001/getGroupByID/${groupID}`);
+            const response = await axios.get(`${import.meta.env.VITE_BASE_UR}/getGroupByID/${groupID}`);
 
             if (response.status === 200) {
                 // For each message, fetch the user name using the userID
                 const messagesWithUsernames = await Promise.all(response.data.messages.map(async (msg) => {
                     try {
                         // Fetch the user by their ID
-                        const userResponse = await axios.get(`http://localhost:3001/getUserByID/${msg.userID}`);
+                        const userResponse = await axios.get(`${import.meta.env.VITE_BASE_UR}/getUserByID/${msg.userID}`);
 
                         if (userResponse.status === 200) {
                             return {
@@ -180,7 +180,7 @@ const Home = () => {
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return; // Prevent sending empty messages
 
-        const url = "http://localhost:3001/sendMessage"; // Backend endpoint
+        const url = `${import.meta.env.VITE_BASE_UR}/sendMessage`; // Backend endpoint
 
         try {
             const response = await axios.post(url, {
@@ -224,7 +224,7 @@ const Home = () => {
 
         try {
 
-            const url = `http://localhost:3001/removeGroup/${activeGroup._id}/${userID}`;
+            const url = `${import.meta.env.VITE_BASE_UR}/removeGroup/${activeGroup._id}/${userID}`;
             setIsLoading(true)
             console.log(url);
             const response = await axios.post(url);
