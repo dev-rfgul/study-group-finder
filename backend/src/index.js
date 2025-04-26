@@ -27,6 +27,9 @@ mongoose.connect(mongodbURL, {
         console.log('Error connecting to MongoDB:', err);
     });
 
+app.get('/', (req, res) => {
+    res.send('Hello World! The server is running.');
+});
 app.get('/notification', async (req, res) => {
     res.send("hello world the server is running")
 })
