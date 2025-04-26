@@ -13,7 +13,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// const port = process.env.LOCALHOST_PORT || 3002;
+const port = process.env.LOCALHOST_PORT || 3002;
 const mongodbURL = process.env.MONGO_DB_URL
 console.log(mongodbURL)
 mongoose.connect(mongodbURL, {
@@ -278,9 +278,8 @@ app.get("/:groupID/messages", async (req, res) => {
 
 
 
-// app.listen(port, () => {
-//     console.log(`Server is running on port ${port}`);
-// });
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
 
-// export default app;
-module.exports = app;
+export default  app;
