@@ -10,7 +10,17 @@ import MessageModel from './models/message.model.js';
 dotenv.config();  // Load environment variables from .env
 
 const app = express();
-app.use(cors());
+const allowedOrigins = [
+    'http://localhost:3000',
+    'https://study-group-finder-cyan.vercel.app/'
+]
+const corsOptions = {
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 const port = process.env.LOCALHOST_PORT || 3002;
