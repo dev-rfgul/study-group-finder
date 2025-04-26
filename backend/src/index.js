@@ -28,7 +28,8 @@ mongoose.connect(mongodbURL, {
     });
 
 app.get('/', (req, res) => {
-    res.send('Hello World! The server is running.');
+    res.send('Hello World! The server is running correctly.');
+
 });
 app.get('/notification', async (req, res) => {
     res.send("hello world the server is running")
