@@ -12,7 +12,7 @@ dotenv.config();  // Load environment variables from .env
 const app = express();
 const allowedOrigins = [
     'http://localhost:3000',
-    'https:/study-group-finder-cyan.vercel.app'
+    'https://study-group-finder-cyan.vercel.app'
 ]
 const corsOptions = {
     origin: allowedOrigins,
