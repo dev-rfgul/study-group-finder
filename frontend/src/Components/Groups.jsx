@@ -6,13 +6,13 @@ const Groups = () => {
     const [groups, setGroups] = useState([]);
 
     useEffect(() => {
-        axios.get('http://localhost:3001/getGroups')
+        axios.get(`${import.meta.env.VITE_BASE_URL}/getGroups`)
             .then(result => setGroups(result.data))
             .catch(error => console.log(error))
     }, [])
 
     const deleteGroup = (id) => {
-        axios.delete(`http://localhost:3001/deleteGroupByID/${id}`)
+        axios.delete(`${import.meta.env.VITE_BASE_URL}/deleteGroupByID/${id}`)
             .then(result => {
                 console.log(result)
                 window.location.reload()

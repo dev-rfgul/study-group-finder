@@ -15,7 +15,7 @@ const Signup = () => {
 
     const submit = (e) => {
         e.preventDefault();
-        axios.post("http://localhost:3001/createGroup", { name, department, description, image })
+        axios.post(`${import.meta.env.VITE_BASE_URL}/createGroup`, { name, department, description, image })
         // console.log(name, department, description, image)
             .then(result => {
                 console.log('Response:', result.data); // Log response data

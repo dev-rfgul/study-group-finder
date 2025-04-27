@@ -7,13 +7,13 @@ const Users = () => {
 
 
     useEffect(() => {
-        axios.get('http://localhost:3001/getUsers')
+        axios.get(`${import.meta.env.VITE_BASE_URL}/getUsers`)
             .then(result => setUsers(result.data))
             .catch(error => console.log(error))
     }, [])
 
     const deleteUser = (id) => {
-        axios.delete(`http://localhost:3001/deleteUserByID/${id}`)
+        axios.delete(`${import.meta.env.VITE_BASE_URL}/deleteUserByID/${id}`)
             .then(result => {
                 console.log(result)
                 window.location.reload()
